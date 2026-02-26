@@ -1,28 +1,40 @@
 'use client';
 
 import { motion, useAnimation } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 
 interface AboutProps {
   onDragHover: (isHovering: boolean) => void;
 }
 
 export default function About ({ onDragHover }: AboutProps) {
+    const [mounted, setMounted] = useState(false);
     const constraintsRef = useRef(null)
     const controls = useAnimation()
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+        useEffect(() => {
+        setMounted(true);
+        return () => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        };
+    }, []);
+
     const handleDragEnd = () => {
-        setTimeout(() => {
-            controls.start({
-                x: 0,
-                y: 0,
-                transition: { 
-                type: "spring", 
-                stiffness: 100, 
-                damping: 20 
-                }
-            });
-        }, 5000)
-    }
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    timeoutRef.current = setTimeout(() => {
+      controls.start({
+        x: 0,
+        y: 0,
+        transition: { 
+          type: "spring", 
+          stiffness: 100, 
+          damping: 20 
+            }
+        });
+        }, 5000);
+    };
+    if (!mounted) return <section className="min-h-screen bg-[#0f0f0f]" />;
     return(
         <section id='about' 
         className="relative min-h-screen w-full bg-[#0f0f0f] flex flex-col p-12 lg:p-24 overflow-hidden"

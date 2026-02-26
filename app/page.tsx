@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/navbar"; 
-import Hero from "@/components/hero";     
-import About from "@/components/about";
-import Contact from "@/components/contact";
+
+
+const Hero = dynamic(() => import("@/components/hero"), { ssr: false });
+const About = dynamic(() => import("@/components/about"), { ssr: false });
+const Contact = dynamic(() => import("@/components/contact"), { ssr: false });
 
 export default function Page() {
   const [mounted, setMounted] = useState(false);
@@ -15,6 +18,7 @@ export default function Page() {
     setMounted(true);
   }, []);
 
+  
   const shouldHideBall = isHoveringNav || isHoveringDrag;
 
   if (!mounted) {

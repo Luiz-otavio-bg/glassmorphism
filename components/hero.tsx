@@ -9,10 +9,8 @@ interface HeroProps {
 }
 
 export default function Hero ({ isNavHovered, isDragHovered }: HeroProps) {
-
-    const [isVisible, setIsVisible] = useState(true);
-    const [mounted, setMounted] = useState(false);
     
+    const [mounted, setMounted] = useState(false);
     const mouseX = useMotionValue(0)
     const mouseY = useMotionValue(0)
 
@@ -22,16 +20,14 @@ export default function Hero ({ isNavHovered, isDragHovered }: HeroProps) {
     const shouldHide = isNavHovered || isDragHovered;
 
     useEffect(() =>{
+        setMounted(true)
+        
         const handleMouseMove = (e: MouseEvent) => {
-            setMounted(true);
-            mouseX.set(e.clientX - 64)
-            mouseY.set(e.clientY - 64)
-
-            if (e.clientY < 0){
-                setIsVisible(false)
-            }else{
-                setIsVisible(true)
-            }
+            
+            window.requestAnimationFrame(() => {
+                mouseX.set(e.clientX - 40); 
+                mouseY.set(e.clientY - 40);
+            });
         };
 
         window.addEventListener('mousemove', handleMouseMove);

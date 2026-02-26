@@ -1,33 +1,39 @@
 "use client";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function FloatingShape({ type, color, initialX, initialY }: { type: 'circle' | 'square', color: string, initialX: string, initialY: string }) {
-  
+    const [mounted, setMounted] = useState(false);
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
     useEffect(() => {
+    setMounted(true);
         const handleMouseMove = (e: MouseEvent) => {
         mouseX.set(e.clientX);
         mouseY.set(e.clientY);
         };
         window.addEventListener("mousemove", handleMouseMove);
         return () => window.removeEventListener("mousemove", handleMouseMove);
-    }, []);
+    }, [mouseX, mouseY]);
 
 
     const springConfig = { stiffness: 50, damping: 20 };
+
     const dx = useSpring(useTransform(mouseX, (val: number): number => {
+        if (typeof window === "undefined") return 0;
         const dist = val - (window.innerWidth * parseFloat(initialX) / 100);
         return Math.abs(dist) < 200 ? (dist > 0 ? -50 : 50) : 0;
     }), springConfig);
 
     const dy = useSpring(useTransform(mouseY, (val: number): number => {
+        if (typeof window === "undefined") return 0;
         const dist = val - (window.innerHeight * parseFloat(initialY) / 100);
         return Math.abs(dist) < 200 ? (dist > 0 ? -50 : 50) : 0;
     }), springConfig);
 
+    if (!mounted) return null;
+    
   return (
     <motion.div
       style={{ left: initialX, top: initialY, x: dx, y: dy }}
