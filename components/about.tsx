@@ -43,7 +43,7 @@ export default function About ({ onDragHover }: AboutProps) {
         
         <div className="z-10 w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-20 items-center"></div>
             
-            <div className="max-w-3xl z-13 mb-20">
+            <div className="max-w-3xl z-13 mb-20 md:mb-20">
                 <h2 className="font-sans text-4xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200/45 to-white bg-[length:200%_auto] hover:bg-right transition-all duration-2000 mb-6 tracking-tight">
                 Transparency Redefined.
                 </h2>
@@ -54,8 +54,8 @@ export default function About ({ onDragHover }: AboutProps) {
                 </p>
             </div>
 
-            <div className="flex flex-1 items-center justify-between gap-10 z-[15]">
-                <div className="relative w-1/2 h-[400px] border border-white/5 rounded-3xl bg-white/[0.01]">
+            <div className="flex flex-col lg:flex-row flex-1 items-center justify-between gap-12 lg:gap-10 z-[15]">
+                <div className="relative lg:w-1/2 w-full md:h-[400px] h-[400px] border border-white/5 rounded-3xl bg-white/[0.01]">
                     <motion.div
                         drag
                         animate={controls}
@@ -75,7 +75,7 @@ export default function About ({ onDragHover }: AboutProps) {
                     <div className="absolute bottom-30 right-110 w-32 h-32 bg-blue-900/50 rotate-125" />
 
                 </div>
-                <div className="w-1/2 flex flex-col items-end justify-center pr-40 mb-10 pointer-events-none">
+                <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-end justify-center lg:pr-20 mb-10 pointer-events-none">
                     <div className="flex flex-col gap-2">
                             <h1 className="font-lemon text-[120px] leading-none text-white/10 select-none" style={{ animation: 'pulse 5s infinite' }}>
                             BG
