@@ -11,6 +11,7 @@ interface HeroProps {
 export default function Hero ({ isNavHovered, isDragHovered }: HeroProps) {
 
     const [isVisible, setIsVisible] = useState(true);
+    const [mounted, setMounted] = useState(false);
     
     const mouseX = useMotionValue(0)
     const mouseY = useMotionValue(0)
@@ -22,6 +23,7 @@ export default function Hero ({ isNavHovered, isDragHovered }: HeroProps) {
 
     useEffect(() =>{
         const handleMouseMove = (e: MouseEvent) => {
+            setMounted(true);
             mouseX.set(e.clientX - 64)
             mouseY.set(e.clientY - 64)
 
@@ -35,6 +37,7 @@ export default function Hero ({ isNavHovered, isDragHovered }: HeroProps) {
         window.addEventListener('mousemove', handleMouseMove);
         return () => window.removeEventListener('mousemove', handleMouseMove)
     }, [mouseX, mouseY])
+    if (!mounted) return <section className="min-h-screen bg-[#0a192f]" />;
 
 
     return (
@@ -79,7 +82,7 @@ export default function Hero ({ isNavHovered, isDragHovered }: HeroProps) {
                 transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute top-20 right-20 w-60 h-60 bg-blue-300/10 rounded-full  z-[11]"
             />
-            
+
 
             <motion.div 
                 animate={{ x: [0, 80, 0], y: [0, 60, 0] }}
