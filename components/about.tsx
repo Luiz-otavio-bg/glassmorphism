@@ -1,94 +1,107 @@
-'use client';
+"use client";
 
 import { motion, useAnimation } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
+import type { Language } from "@/components/language-switch";
 
 interface AboutProps {
+  language: Language;
   onDragHover: (isHovering: boolean) => void;
 }
 
-export default function About ({ onDragHover }: AboutProps) {
-    const [mounted, setMounted] = useState(false);
-    const constraintsRef = useRef(null)
-    const controls = useAnimation()
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-        useEffect(() => {
-        setMounted(true);
-        return () => {
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        };
-    }, []);
+const aboutCopy = {
+  en: {
+    title: "Transparency Redefined.",
+    body: "Move beyond flat design. Glassmorphism brings tactile realism to digital interfaces through soft shadows, frosted textures, and vibrant light. It's not just about looking good; it's about creating a spatial experience where every layer feels intentional and connected.",
+    drag: "Drag Me",
+  },
+  pt: {
+    title: "Transparência Redefinida.",
+    body: "Vá além do design plano. O glassmorphism traz realismo tátil para interfaces digitais com sombras suaves, texturas foscas e luz vibrante. Não é só sobre parecer bonito; é sobre criar uma experiência espacial em que cada camada parece intencional e conectada.",
+    drag: "Arraste",
+  },
+};
 
-    const handleDragEnd = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+export default function About({ language, onDragHover }: AboutProps) {
+  const constraintsRef = useRef<HTMLDivElement>(null);
+  const controls = useAnimation();
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    timeoutRef.current = setTimeout(() => {
+  useEffect(() => {
+    return () => {
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+    };
+  }, []);
+
+  const handleDragEnd = () => {
+    if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+
+    resetTimerRef.current = setTimeout(() => {
       controls.start({
         x: 0,
         y: 0,
-        transition: { 
-          type: "spring", 
-          stiffness: 100, 
-          damping: 20 
-            }
-        });
-        }, 5000);
-    };
-    if (!mounted) return <section className="min-h-screen bg-[#0f0f0f]" />;
-    return(
-        <section id='about' 
-        className="relative min-h-screen w-full bg-[#0f0f0f] flex flex-col p-12 lg:p-24 overflow-hidden"
-        ref={constraintsRef}
-        > 
-        
-        <div className="z-10 w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-20 items-center"></div>
-            
-            <div className="max-w-3xl z-13 mb-20 md:mb-20">
-                <h2 className="font-sans text-4xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200/45 to-white bg-[length:200%_auto] hover:bg-right transition-all duration-2000 mb-6 tracking-tight">
-                Transparency Redefined.
-                </h2>
-                <p className="font-sans text-lg text-white/60 leading-relaxed font-light">
-                Move beyond flat design. Glassmorphism brings tactile realism to digital interfaces through soft shadows, 
-                frosted textures, and vibrant light. It’s not just about looking good—it’s about creating a spatial 
-                experience where every layer feels intentional and connected.
-                </p>
-            </div>
+        transition: {
+          type: "spring",
+          stiffness: 100,
+          damping: 20,
+        },
+      });
+    }, 5000);
+  };
 
-            <div className="flex flex-col lg:flex-row flex-1 items-center justify-between gap-12 lg:gap-10 z-[15]">
-                <div className="relative lg:w-1/2 w-full md:h-[400px] h-[400px] border border-white/5 rounded-3xl bg-white/[0.01]">
-                    <motion.div
-                        drag
-                        animate={controls}
-                        dragConstraints={constraintsRef} 
-                        dragElastic={0.5}
-                        dragMomentum={false}
-                        onDragEnd={handleDragEnd} 
-                        onMouseEnter={() => onDragHover(true)}
-                        onMouseLeave={() => onDragHover(false)}
-                        whileDrag={{ scale: 1.05, cursor: "grabbing" }}
-                        className="absolute z-[60] w-64 h-40 bg-white/[0.05] backdrop-blur-sm border border-white/20 rounded-2xl cursor-grab shadow-2xl flex items-center justify-center select-none"
-                    >
-                        <span className="font-sans text-xs text-white/30 uppercase tracking-widest">Drag Me</span>
-                    </motion.div>
-                    <div className="absolute top-10 left-10 w-20 h-20 bg-blue-500 rounded-full  opacity-50" />
-                    <div className="absolute bottom-10 right-20 w-32 h-10 bg-gradient-to-r from-sky-500 to-blue-600 rounded-full rotate-45" />
-                    <div className="absolute bottom-30 right-110 w-32 h-32 bg-blue-900/50 rotate-125" />
+  return (
+    <section
+      id="about"
+      ref={constraintsRef}
+      className="relative flex min-h-screen w-full flex-col overflow-hidden bg-[#0f0f0f] px-5 py-24 sm:px-10 lg:px-24"
+    >
+      <div className="relative z-[15] mb-16 max-w-3xl">
+        <h2 className="mb-6 bg-gradient-to-r from-white via-blue-200/45 to-white bg-[length:200%_auto] bg-clip-text font-sans text-4xl tracking-tight text-transparent transition-all duration-1000 hover:bg-right md:text-6xl">
+          {aboutCopy[language].title}
+        </h2>
+        <p className="font-sans text-base font-light leading-relaxed text-white/60 md:text-lg">
+          {aboutCopy[language].body}
+        </p>
+      </div>
 
-                </div>
-                <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-end justify-center lg:pr-20 mb-10 pointer-events-none">
-                    <div className="flex flex-col gap-2">
-                            <h1 className="font-lemon text-[120px] leading-none text-white/10 select-none" style={{ animation: 'pulse 5s infinite' }}>
-                            BG
-                            </h1>
-                            <h1 className="font-lemon text-[150px] leading-none text-white/30 select-none">
-                            BG
-                            </h1>
-                            <h1 className="font-lemon text-[180px] leading-none text-white select-none" style={{ animation: 'pulse 10s infinite' }}>
-                            BG
-                            </h1>
-                    </div>
-                </div>
-            </div>
-        </section>
-    )
+      <div className="z-[15] flex flex-1 flex-col items-center justify-between gap-12 lg:flex-row lg:gap-10">
+        <div className="relative h-[24rem] w-full overflow-hidden rounded-3xl border border-white/10 bg-white/[0.015] lg:w-1/2">
+          <motion.div
+            drag
+            animate={controls}
+            dragConstraints={constraintsRef}
+            dragElastic={0.5}
+            dragMomentum={false}
+            onDragEnd={handleDragEnd}
+            onMouseEnter={() => onDragHover(true)}
+            onMouseLeave={() => onDragHover(false)}
+            whileDrag={{ scale: 1.05, cursor: "grabbing" }}
+            className="absolute left-[calc(50%-8rem)] top-[calc(50%-5rem)] z-[60] flex h-40 w-64 cursor-grab select-none items-center justify-center rounded-2xl border border-white/20 bg-white/[0.05] shadow-2xl backdrop-blur-sm"
+          >
+            <span className="font-sans text-xs uppercase tracking-widest text-white/35">
+              {aboutCopy[language].drag}
+            </span>
+          </motion.div>
+
+          <div className="absolute left-8 top-8 h-20 w-20 rounded-full bg-blue-500 opacity-50" />
+          <div className="absolute bottom-12 right-12 h-10 w-32 rotate-45 rounded-full bg-gradient-to-r from-sky-500 to-blue-600" />
+          <div className="absolute bottom-20 left-1/3 h-28 w-28 rotate-[125deg] bg-blue-900/50" />
+        </div>
+
+        <div className="pointer-events-none mb-10 flex w-full flex-col items-center justify-center lg:w-1/2 lg:items-end lg:pr-16">
+          <div className="flex flex-col gap-2">
+            <h3 className="font-lemon select-none text-[clamp(5rem,16vw,7.5rem)] leading-none text-white/10 [animation:pulse_5s_infinite]">
+              BG
+            </h3>
+            <h3 className="font-lemon select-none text-[clamp(6rem,18vw,9.5rem)] leading-none text-white/30">
+              BG
+            </h3>
+            <h3 className="font-lemon select-none text-[clamp(7rem,20vw,11rem)] leading-none text-white [animation:pulse_10s_infinite]">
+              BG
+            </h3>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

@@ -2,118 +2,130 @@
 
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState } from "react";
+import type { Language } from "@/components/language-switch";
 
 interface HeroProps {
-    isNavHovered: boolean;
-    isDragHovered: boolean;
+  language: Language;
+  isNavHovered: boolean;
+  isDragHovered: boolean;
 }
 
-export default function Hero ({ isNavHovered, isDragHovered }: HeroProps) {
-    
-    const [mounted, setMounted] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
-    const mouseX = useMotionValue(0)
-    const mouseY = useMotionValue(0)
+const backgroundOrbs = [
+  {
+    className: "right-[8%] top-[12%] h-[15rem] w-[15rem] bg-[#2f405f]/90",
+    animate: { x: [0, 0, 0], y: [0, -30, 0] },
+    duration: 8,
+  },
+  {
+    className: "right-[9%] top-[14%] h-[12rem] w-[12rem] bg-sky-300/10",
+    animate: { x: [-10, -10, -10], y: [0, -10, 0] },
+    duration: 8,
+  },
+  {
+    className: "bottom-[10%] left-[8%] h-[18rem] w-[18rem] bg-sky-300/10",
+    animate: { x: [0, 80, 0], y: [0, 60, 0] },
+    duration: 12,
+  },
+  {
+    className: "bottom-[12%] left-[10%] h-[15rem] w-[15rem] bg-[#2f405f]/70",
+    animate: { x: [0, 80, 0], y: [0, 60, 0] },
+    duration: 12,
+  },
+  {
+    className: "bottom-[14%] right-[6%] h-[10rem] w-[10rem] bg-sky-300/10",
+    animate: { x: [0, -90, 0], y: [0, 60, 0] },
+    duration: 12,
+  },
+  {
+    className: "bottom-[18%] right-[10%] h-[8rem] w-[8rem] bg-[#2f405f]",
+    animate: { x: [0, -70, 0], y: [0, 45, 0] },
+    duration: 12,
+  },
+];
 
-    const springConfig = {damping: 25, stiffness: 150};
-    const scrollX = useSpring(mouseX, springConfig)
-    const scrollY = useSpring(mouseY, springConfig)
-    const shouldHide = isNavHovered || isDragHovered;
+const heroCopy = {
+  en: { welcome: "WELCOME", to: "to" },
+  pt: { welcome: "BEM-VINDO", to: "ao" },
+};
 
-    useEffect(() =>{
-        setMounted(true)
+export default function Hero({ language, isNavHovered, isDragHovered }: HeroProps) {
+  const [isMobile, setIsMobile] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
-            };
-            
-            checkMobile();
-            window.addEventListener('resize', checkMobile);
-        
-        const handleMouseMove = (e: MouseEvent) => {
-            
-            window.requestAnimationFrame(() => {
-                mouseX.set(e.clientX - 40); 
-                mouseY.set(e.clientY - 40);
-            });
-        };
+  const cursorX = useSpring(mouseX, { damping: 25, stiffness: 150 });
+  const cursorY = useSpring(mouseY, { damping: 25, stiffness: 150 });
+  const shouldHideCursor = isMobile || isNavHovered || isDragHovered;
 
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove)
-    }, [mouseX, mouseY])
-    if (!mounted) return <section className="min-h-screen bg-[#0a192f]" />;
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || "ontouchstart" in window);
+    };
 
+    const handleMouseMove = (event: MouseEvent) => {
+      window.requestAnimationFrame(() => {
+        mouseX.set(event.clientX - 40);
+        mouseY.set(event.clientY - 40);
+      });
+    };
 
-    return (
-        <section id='home' className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#0a192f] via-[#0a192f] to-[#0f0f0f]">
-            
-            <div className="relative z-10 w-[95%] md:w-[90%] h-[70vh] md:h-[85vh] bg-white/5 backdrop-blur-md border border-white/10 rounded-[20px] shadow-2xl flex flex-col items-center justify-center p-4 md:p-8 overflow-hidden">
-                <div className="text-center z-20 select-none w-full">
-                
-                <h2 className="font-sans font-medium text-2xl sm:text-4xl md:text-6xl text-white tracking-[0.2em] mb-2 md:mb-[-10px]">
-                    WELCOME
-                </h2>
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    window.addEventListener("mousemove", handleMouseMove);
 
-                <div className="relative inline-block my-4 md:my-0">
-                    <span className="font-rubrica text-2xl md:text-5xl text-white md:absolute md:left-1/2 md:-translate-x-1/2 md:-top-6 z-20">
-                    to
-                    </span>
-                </div>
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, [mouseX, mouseY]);
 
-                <div className="font-sans font-bold text-4xl sm:text-6xl md:text-8xl lg:text-9xl flex flex-col md:flex-row items-center justify-center leading-tight">
-                    <span 
-                    className="bg-gradient-to-r from-white via-white/50 to-white inline-block text-transparent bg-clip-text bg-[length:200%_auto] transition-all duration-1000 text-center" 
-                    style={{ WebkitTextStroke: isMobile ? '0.5px rgba(255, 255, 255, 0.8)' : '1px rgba(255, 255, 255, 0.81)' }}
-                    >
-                    GLASSMORPHISM
-                    </span>
-                </div>
-                </div>
-            </div>
+  return (
+    <section
+      id="home"
+      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-gradient-to-b from-[#0a192f] via-[#0a192f] to-[#0f0f0f] px-3 py-20 sm:px-5 lg:px-7"
+    >
+      <div className="relative z-10 flex h-[82vh] min-h-[34rem] w-full max-w-[88rem] items-center justify-center overflow-hidden rounded-[20px] border border-white/10 bg-white/5 p-5 text-center shadow-2xl backdrop-blur-md md:h-[88vh] md:p-8 xl:max-w-[96rem]">
+        <div className="z-20 w-full select-none">
+          <h2 className="mb-4 font-sans text-2xl font-medium tracking-[0.2em] text-white sm:text-4xl md:mb-0 md:text-6xl">
+            {heroCopy[language].welcome}
+          </h2>
 
-            <motion.div 
-                style={{ x: scrollX, y: scrollY }}
-                    animate={{ 
-                    opacity: shouldHide ? 0 : 1,
-                    scale: shouldHide ? 0.5 : 1 
-                    }}
-                    className="fixed top-0 left-0 w-20 h-20 rounded-full pointer-events-none z-[12] bg-white/[0.03] backdrop-blur-[5px] border border-white/20 shadow-2xl"
-                />
+          <span className="font-rubrica block translate-x-2 text-3xl text-white sm:translate-x-3 md:-mt-4 md:text-5xl lg:translate-x-4">
+            {heroCopy[language].to}
+          </span>
 
-            
-            <motion.div 
-                animate={{ x: [0, 0, 0], y: [0, -30, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-20 right-20 w-70 h-70 bg-darkblue rounded-full  z-[11]"
-            />
-            <motion.div 
-                animate={{ x: [-10, -10, -10], y: [0, -10, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-20 right-20 w-60 h-60 bg-blue-300/10 rounded-full  z-[11]"
-            />
+          <h1 className="mt-2 font-sans text-[clamp(2.45rem,12vw,8rem)] font-bold leading-none md:mt-0">
+            <span
+              className="inline-block max-w-full break-words bg-gradient-to-r from-white via-white/55 to-white bg-[length:200%_auto] bg-clip-text text-center text-transparent transition-all duration-1000"
+              style={{
+                WebkitTextStroke: isMobile
+                  ? "0.5px rgba(255, 255, 255, 0.8)"
+                  : "1px rgba(255, 255, 255, 0.81)",
+              }}
+            >
+              GLASSMORPHISM
+            </span>
+          </h1>
+        </div>
+      </div>
 
+      <motion.div
+        style={{ x: cursorX, y: cursorY }}
+        animate={{
+          opacity: shouldHideCursor ? 0 : 1,
+          scale: shouldHideCursor ? 0.5 : 1,
+        }}
+        className="pointer-events-none fixed left-0 top-0 z-[12] hidden h-20 w-20 rounded-full border border-white/20 bg-white/[0.03] shadow-2xl backdrop-blur-[5px] md:block"
+      />
 
-            <motion.div 
-                animate={{ x: [0, 80, 0], y: [0, 60, 0] }}
-                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute bottom-20 left-20 w-95 h-95 bg-blue-300/10 rounded-full  z-[9]"
-            />
-            <motion.div 
-                animate={{ x: [0, 80, 0], y: [0, 60, 0] }}
-                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute bottom-20 left-20 w-70 h-70 bg-darkblue/70 rounded-full  z-[9]"
-            />
-
-
-            <motion.div 
-                animate={{ x: [1330, 1240, 1330], y: [0, 60, 0] }}
-                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute bottom-20 left-20 w-60 h-60 bg-blue-300/10 rounded-full  z-[9]"
-            /><motion.div 
-                animate={{ x: [1330, 1240, 1330], y: [0, 60, 0] }}
-                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute bottom-20 left-20 w-35 h-35 bg-darkblue rounded-full  z-[9]"
-            />
-        </section>
-    )
+      {backgroundOrbs.map((orb) => (
+        <motion.div
+          key={orb.className}
+          animate={orb.animate}
+          transition={{ duration: orb.duration, repeat: Infinity, ease: "easeInOut" }}
+          className={`absolute z-[9] rounded-full ${orb.className}`}
+        />
+      ))}
+    </section>
+  );
 }

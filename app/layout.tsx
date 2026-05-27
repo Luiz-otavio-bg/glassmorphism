@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import localFont from 'next/font/local';
+import localFont from "next/font/local";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -15,7 +15,7 @@ const lemonMilk = localFont({
 const rubrica = localFont({
   src: "./fonts/rubrica.ttf",
   variable: "--font-rubrica",
-})
+});
 
 export const metadata: Metadata = {
   title: "Glassmorphism - BG",
@@ -28,11 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    
-    <html lang="pt-br" className={`${poppins.className} ${lemonMilk.variable} ${rubrica.variable}  `}>
-      <body className="font-sans antialised bg-[#0a192f]"> 
-        {children}
-      </body>
+    <html
+      lang="pt-br"
+      className={`${poppins.className} ${lemonMilk.variable} ${rubrica.variable}`}
+    >
+      <body className="bg-[#0a192f] font-sans antialiased">{children}</body>
     </html>
   );
 }
